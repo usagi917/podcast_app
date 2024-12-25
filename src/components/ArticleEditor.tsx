@@ -5,20 +5,18 @@ import VoiceSelector from './VoiceSelector';
 import AudioPlayer from './AudioPlayer';
 
 interface ArticleEditorProps {
-  onSummaryChange: (summary: string) => void;
-  article?: { content: string } | string;
-  summary?: string;
+  article: string;
+  onSummaryChange?: (summary: string) => void;
 }
 
 export default function ArticleEditor({ 
-  onSummaryChange, 
-  article = '', 
-  summary = ''
+  article,
+  onSummaryChange = () => {}
 }: ArticleEditorProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedScript, setEditedScript] = useState(summary);
+  const [editedScript, setEditedScript] = useState('');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
 
@@ -34,9 +32,7 @@ export default function ArticleEditor({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          text: typeof article === 'string' ? article : article.content
-        }),
+        body: JSON.stringify({ text: article }),
       });
 
       if (!response.ok) {
@@ -55,10 +51,10 @@ export default function ArticleEditor({
   }, [article, onSummaryChange]);
 
   useEffect(() => {
-    if (article && !summary) {
+    if (article && !editedScript) {
       handleSummarize();
     }
-  }, [article, summary, handleSummarize]);
+  }, [article, editedScript, handleSummarize]);
 
   const handleConfirm = () => {
     setIsConfirmed(true);
@@ -89,7 +85,6 @@ export default function ArticleEditor({
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedScript(summary);
   };
 
   const handleAudioGenerated = (url: string) => {
@@ -103,7 +98,7 @@ export default function ArticleEditor({
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">生成されたセリフ</h3>
             <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-              <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{summary}</p>
+              <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{editedScript}</p>
             </div>
             <div className="mt-4 flex gap-4">
               {!isConfirmed ? (
@@ -139,7 +134,7 @@ export default function ArticleEditor({
             <div className="mt-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  セリフ（500文���以内）
+                  セリフ（500文字以内）
                 </label>
                 <textarea
                   value={editedScript}
@@ -200,7 +195,7 @@ export default function ArticleEditor({
       {isConfirmed && (
         <>
           <VoiceSelector
-            text={summary}
+            text={editedScript}
             onAudioGenerated={handleAudioGenerated}
           />
 

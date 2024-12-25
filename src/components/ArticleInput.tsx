@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Article } from '@/types';
 
 interface ArticleInputProps {
-  onArticleLoad: (article: Article) => void;
+  onArticleSubmit: (article: string) => void;
 }
 
-export default function ArticleInput({ onArticleLoad }: ArticleInputProps) {
+export default function ArticleInput({ onArticleSubmit }: ArticleInputProps) {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +35,7 @@ export default function ArticleInput({ onArticleLoad }: ArticleInputProps) {
       }
 
       const article = await response.json();
-      onArticleLoad(article);
+      onArticleSubmit(article.content);
       
       setUrl('');
     } catch (err) {
