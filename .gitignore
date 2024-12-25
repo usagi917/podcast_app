@@ -39,3 +39,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# その他の一般的な除外項目
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# デバッグログ
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# エディタ設定
+.idea/
+.vscode/
+*.swp
+*.swo
